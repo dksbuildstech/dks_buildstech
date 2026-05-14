@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dheer Kumar Sharma | Pianist • Builder • Creator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&amp;family=Inter:wght@400;500;600&amp;display=swap');
+        
+        :root {
+            --gold: #d4af37;
+        }
+        
+        .tail-container {
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+        
+        .heading-font {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .hero-bg {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.85)), 
+                        url('https://picsum.photos/id/1015/2000/1200') center/cover;
+            background-attachment: fixed;
+        }
+
+        .parallax-layer {
+            transition: transform 0.1s ease-out;
+        }
+
+        .musical-note {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.15;
+            color: var(--gold);
+            animation: floatNote 25s linear infinite;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        @keyframes floatNote {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+
+        .texture-overlay {
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(212, 175, 55, 0.06) 0%, transparent 50%);
+            background-size: 80px 80px;
+            pointer-events: none;
+        }
+
+        .section-header {
+            position: relative;
+        }
+        
+        .section-header::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(to right, #d4af37, #f0d48a);
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(to right, #d4af37, #f0d48a);
+            z-index: 50;
+        }
+
+        .piano-key {
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .piano-key:active {
+            transform: scaleY(0.85);
+            background-color: #d4af37 !important;
+            color: black;
+        }
+    </style>
+</head>
+<body class="tail-container bg-zinc-950 text-zinc-200 overflow-x-hidden">
+    <!-- Progress Bar -->
+    <div id="progress-bar" class="scroll-progress w-0"></div>
+
+    <!-- NAV -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+            <div class="flex items-center gap-x-3">
+                <div class="w-9 h-9 bg-amber-400 rounded-full flex items-center justify-center text-zinc-950 font-bold text-xl">D</div>
+                <span class="heading-font text-2xl tracking-tight font-semibold text-amber-300">DHEER</span>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-x-8 text-sm uppercase tracking-widest font-medium">
+                <a href="#about" onclick="smoothScrollTo('about')" class="hover:text-amber-300 transition-colors">About</a>
+                <a href="#music" onclick="smoothScrollTo('music')" class="hover:text-amber-300 transition-colors">Music</a>
+                <a href="#channels" onclick="smoothScrollTo('channels')" class="hover:text-amber-300 transition-colors">Channels</a>
+                <a href="#journey" onclick="smoothScrollTo('journey')" class="hover:text-amber-300 transition-colors">Journey</a>
+                <a href="#insights" onclick="smoothScrollTo('insights')" class="hover:text-amber-300 transition-colors">Insights</a>
+            </div>
+            
+            <a href="https://github.com/dksbuildstech" target="_blank" 
+               class="px-6 py-2.5 bg-white/5 hover:bg-amber-300 hover:text-zinc-950 border border-amber-300/30 rounded-full text-sm font-medium transition-all flex items-center gap-x-2">
+                <i class="fab fa-github"></i>
+                <span>GITHUB</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header id="hero" class="hero-bg min-h-screen flex items-center relative overflow-hidden">
+        <!-- Floating Musical Notes -->
+        <div id="notes-container" class="absolute inset-0"></div>
+        
+        <!-- Texture Overlay -->
+        <div class="texture-overlay absolute inset-0 z-10"></div>
+        
+        <div class="max-w-7xl mx-auto px-6 relative z-20 pt-20">
+            <div class="grid md:grid-cols-12 gap-12 items-center">
+                <!-- Left Content -->
+                <div class="md:col-span-7 space-y-8">
+                    <div class="inline-flex items-center gap-x-2 bg-white/10 text-amber-300 text-xs tracking-[3px] px-5 py-3 rounded-3xl border border-amber-300/30">
+                        <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                        CURRENTLY LEARNING PYTHON &amp; WEB DEV
+                    </div>
+                    
+                    <h1 class="heading-font text-[5.5rem] md:text-[7rem] leading-[0.95] font-bold tracking-tighter text-white">
+                        DHEER KUMAR<br>SHARMA
+                    </h1>
+                    
+                    <div class="max-w-md text-xl text-amber-100/90 leading-tight">
+                        Piano virtuoso breathing life into Kishore Kumar's timeless melodies.<br>
+                        Tech builder. Aspiring Pythonista. Storyteller through sound and code.
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="document.getElementById('music').scrollIntoView({ behavior: 'smooth' })" 
+                                class="px-10 py-5 bg-amber-300 hover:bg-white text-zinc-950 rounded-2xl font-semibold flex items-center gap-x-3 group">
+                            <span>EXPLORE MY MUSIC</span>
+                            <i class="fa-solid fa-arrow-right group-active:rotate-45 transition"></i>
+                        </button>
+                        
+                        <a href="https://youtube.com/@dheerkumarsharma" target="_blank"
+                           class="px-8 py-5 border border-amber-300/70 hover:border-amber-300 rounded-2xl font-medium flex items-center gap-x-3 transition-all">
+                            <i class="fa-brands fa-youtube text-red-500"></i>
+                            <span>YOUTUBE</span>
+                        </a>
+                    </div>
+                    
+                    <div class="flex items-center gap-x-8 pt-8">
+                        <div>
+                            <div class="text-4xl font-semibold text-amber-300">1.2M+</div>
+                            <div class="text-xs uppercase tracking-widest text-amber-100/60">Views on Kishore Kumar Jukebox</div>
+                        </div>
+                        <div class="h-12 w-px bg-white/20"></div>
+                        <div>
+                            <div class="text-4xl font-semibold text-amber-300">15+</div>
+                            <div class="text-xs uppercase tracking-widest text-amber-100/60">Piano Covers</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Portrait -->
+                <div class="md:col-span-5 relative flex justify-center">
+                    <div class="relative">
+                        <!-- Parallax frame -->
+                        <div id="portrait-frame" 
+                             class="w-80 md:w-96 aspect-[4/5] bg-gradient-to-br from-amber-300 via-amber-400 to-yellow-600 p-3 rounded-3xl shadow-2xl shadow-black/60 relative">
+                            <img id="portrait" 
+                                 src="https://raw.githubusercontent.com/dksbuildstech/dks_buildstech/main/DHEER%20KUMAR%20SHARMA.jpeg" 
+                                 alt="Dheer Kumar Sharma"
+                                 class="w-full h-full object-cover rounded-2xl border-4 border-zinc-950">
+                            
+                            <!-- Overlay badge -->
+                            <div class="absolute -bottom-4 right-6 bg-zinc-900 text-amber-300 text-xs px-6 py-2.5 rounded-3xl flex items-center gap-x-2 shadow-xl">
+                                <i class="fa-solid fa-music"></i>
+                                <span class="font-medium">KISHORE DA FAN</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Decorative rings -->
+                        <div class="absolute -inset-8 border border-amber-300/30 rounded-[4rem] -rotate-12"></div>
+                        <div class="absolute -inset-16 border border-amber-300/20 rounded-[5rem] rotate-6"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-12 left-1/2 flex flex-col items-center gap-y-2 text-xs tracking-widest z-30">
+            <div class="text-amber-300/70">SCROLL FOR PARALLAX JOURNEY</div>
+            <div class="w-px h-16 bg-gradient-to-b from-transparent via-amber-300/40 to-transparent"></div>
+        </div>
+        
+        <!-- Bottom gradient -->
+        <div class="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-zinc-950 to-transparent z-10"></div>
+    </header>
+
+    <!-- ABOUT -->
+    <section id="about" class="py-28 bg-zinc-950 relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-12 gap-16 items-center">
+                <div class="md:col-span-5">
+                    <div class="sticky top-28">
+                        <div class="inline px-4 py-1.5 text-xs font-mono border border-amber-400/30 text-amber-400 rounded-full">CHAPTER 01 — ORIGINS</div>
+                        <h2 class="heading-font text-6xl leading-none mt-6 tracking-tighter text-white">A Symphony of Code &amp; Melody</h2>
+                        <p class="mt-8 text-lg text-zinc-400 max-w-md">
+                            From the soul-stirring voice of Kishore Kumar to the logical elegance of Python, 
+                            my life is a beautiful fusion of artistic expression and technical curiosity.
+                        </p>
+                        <div class="mt-12 flex items-center gap-x-4">
+                            <div class="flex -space-x-4">
+                                <div class="w-9 h-9 bg-zinc-800 border-2 border-zinc-950 rounded-2xl flex items-center justify-center text-xs">🎹</div>
+                                <div class="w-9 h-9 bg-zinc-800 border-2 border-zinc-950 rounded-2xl flex items-center justify-center text-xs">🐍</div>
+                                <div class="w-9 h-9 bg-zinc-800 border-2 border-zinc-950 rounded-2xl flex items-center justify-center text-xs">💻</div>
+                            </div>
+                            <div class="text-xs leading-tight">
+                                PIANO<br>
+                                PYTHON<br>
+                                <span class="text-amber-400">BUILDSTECH</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="md:col-span-7">
+                    <div class="prose prose-invert max-w-none text-lg leading-relaxed text-zinc-300">
+                        <p class="text-2xl font-light border-l-4 border-amber-400 pl-8">
+                            Hello, I'm Dheer Kumar Sharma. My journey began with the magical piano keys and the golden voice of legends. 
+                            While creating content that touches millions with Kishore Kumar's immortal songs, I'm simultaneously building my future in technology.
+                        </p>
+                        
+                        <div class="my-16 grid grid-cols-2 gap-8">
+                            <div class="glass p-8 rounded-3xl">
+                                <div class="text-amber-400 mb-4">
+                                    <i class="fa-solid fa-music text-4xl"></i>
+                                </div>
+                                <h4 class="text-xl font-semibold mb-3">The Music Within</h4>
+                                <p class="text-zinc-400">
+                                    I breathe life into old Bollywood classics through piano. My channel is a tribute to the legends — especially the versatile genius Kishore Kumar. 
+                                    From soulful jukeboxes to relaxing instrumentals, every note is an offering.
+                                </p>
+                            </div>
+                            
+                            <div class="glass p-8 rounded-3xl">
+                                <div class="text-amber-400 mb-4">
+                                    <i class="fa-solid fa-laptop-code text-4xl"></i>
+                                </div>
+                                <h4 class="text-xl font-semibold mb-3">The Builder in Me</h4>
+                                <p class="text-zinc-400">
+                                    Through <span class="text-amber-300 font-medium">@dksbuildstech</span> I explore electronics, coding, and creative tech projects. 
+                                    Currently immersing myself in Python for data, automation, and AI. HTML, CSS &amp; JavaScript are opening new creative doors.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <p>
+                            This website itself is a living demonstration of what I'm learning — parallax scrolling, GSAP animations, interactive elements, and thoughtful design. 
+                            Every transition represents my belief that technology should feel as magical as music.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MUSIC SECTION -->
+    <section id="music" class="py-24 bg-black relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row gap-20">
+                <div class="md:w-5/12">
+                    <div class="section-header">
+                        <span class="px-5 py-2 bg-white/5 text-amber-400 text-sm font-medium tracking-widest rounded-3xl">CHAPTER 02 — MELODY</span>
+                    </div>
+                    <h2 class="heading-font text-6xl mt-6 leading-none tracking-[-2px]">Kishore's Voice.<br>My Piano.</h2>
+                    <p class="mt-8 text-zinc-400 text-lg max-w-xs">
+                        A digital sanctuary dedicated to the golden era of Hindi film music. 
+                        Old classics, soulful covers, and spiritual chants.
+                    </p>
+                    
+                    <!-- Mini Piano -->
+                    <div class="mt-16 hidden lg:block">
+                        <div class="text-xs uppercase tracking-widest mb-4 text-amber-400/70">Interactive Mini Piano</div>
+                        <div class="flex gap-1 bg-zinc-900 p-4 rounded-3xl shadow-inner">
+                            <div onclick="playNote(261.63)" class="piano-key flex-1 h-32 bg-white text-zinc-950 rounded-xl flex items-end justify-center text-xs font-bold cursor-pointer shadow-inner border border-zinc-300">C</div>
+                            <div onclick="playNote(293.66)" class="piano-key flex-1 h-32 bg-white text-zinc-950 rounded-xl flex items-end justify-center text-xs font-bold cursor-pointer shadow-inner border border-zinc-300">D</div>
+                            <div onclick="playNote(329.63)" class="piano-key flex-1 h-32 bg-white text-zinc-950 rounded-xl flex items-end justify-center text-xs font-bold cursor-pointer shadow-inner border border-zinc-300">E</div>
+                            <div onclick="playNote(349.23)" class="piano-key flex-1 h-32 bg-white text-zinc-950 rounded-xl flex items-end justify-center text-xs font-bold cursor-pointer shadow-inner border border-zinc-300">F</div>
+                            <div onclick="playNote(392)" class="piano-key flex-1 h-32 bg-white text-zinc-950 rounded-xl flex items-end justify-center text-xs font-bold cursor-pointer shadow-inner border border-zinc-300">G</div>
+                            <div onclick="playNote(440)" class="piano-key flex-1 h-32 bg-white text-zinc-950 rounded-xl flex items-end justify-center text-xs font-bold cursor-pointer shadow-inner border border-zinc-300">A</div>
+                            <div onclick="playNote(493.88)" class="piano-key flex-1 h-32 bg-white text-zinc-950 rounded-xl flex items-end justify-center text-xs font-bold cursor-pointer shadow-inner border border-zinc-300">B</div>
+                        </div>
+                        <div class="text-[10px] text-center mt-3 text-zinc-500">Click the keys • Inspired by Kishore Kumar's timeless tunes</div>
+                    </div>
+                </div>
+                
+                <!-- Featured Videos -->
+                <div class="md:w-7/12">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <!-- Video 1 -->
+                        <a href="https://www.youtube.com/watch?v=tRk3kNmep5M" target="_blank" 
+                           class="group bg-zinc-900 rounded-3xl overflow-hidden hover:ring-2 hover:ring-amber-300 transition-all">
+                            <div class="aspect-video bg-zinc-800 relative">
+                                <img src="https://i.ytimg.com/vi/tRk3kNmep5M/hqdefault.jpg" alt="Kishore Kumar Jukebox" 
+                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
+                                    <div class="text-xs bg-black/60 px-3 py-1 rounded-full">4.5M views</div>
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <div class="font-medium leading-tight line-clamp-2">Legend Kishore Kumar Songs Jukebox | Voice That Travels To Your Heart</div>
+                                <div class="text-amber-400 text-sm mt-4 flex items-center gap-x-2">
+                                    <i class="fa-solid fa-play"></i>
+                                    <span>WATCH ON YOUTUBE</span>
+                                </div>
+                            </div>
+                        </a>
+                        
+                        <!-- Video 2 -->
+                        <a href="https://www.youtube.com/watch?v=ewp6P71gXMA" target="_blank" 
+                           class="group bg-zinc-900 rounded-3xl overflow-hidden hover:ring-2 hover:ring-amber-300 transition-all">
+                            <div class="aspect-video bg-zinc-800 relative">
+                                <img src="https://i.ytimg.com/vi/ewp6P71gXMA/hqdefault.jpg" alt="Chehra Hai Ya Chand" 
+                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            </div>
+                            <div class="p-6">
+                                <div class="font-medium leading-tight line-clamp-2">CHEHRA HAI YA CHAND | KISHORE DA | PIANO COVER</div>
+                                <div class="text-amber-400 text-sm mt-4 flex items-center gap-x-2">
+                                    <i class="fa-solid fa-play"></i>
+                                    <span>PIANO COVER</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="mt-8 p-8 glass rounded-3xl">
+                        <div class="flex gap-6">
+                            <div>
+                                <i class="fa-solid fa-quote-left text-6xl text-amber-400/20"></i>
+                            </div>
+                            <div>
+                                <p class="italic text-lg">"Kishore Kumar didn't just sing — he became the song. My mission is to preserve that magic through piano for new generations."</p>
+                                <div class="mt-6 text-amber-400 text-sm">— Dheer Kumar Sharma</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- YOUTUBE CHANNELS -->
+    <section id="channels" class="py-28 bg-zinc-900">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="text-amber-400 text-sm font-medium tracking-widest">MY DIGITAL STAGES</span>
+                <h2 class="heading-font text-5xl mt-3">Two Channels, One Passion</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                <!-- Channel 1: Music -->
+                <div onclick="window.open('https://youtube.com/@dheerkumarsharma', '_blank')" 
+                     class="group cursor-pointer bg-zinc-950 border border-white/10 hover:border-amber-400 rounded-3xl p-2 transition-all">
+                    <div class="bg-black rounded-3xl overflow-hidden">
+                        <div class="h-80 relative">
+                            <img src="https://picsum.photos/id/1016/800/600" alt="Music Channel" 
+                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                            <div class="absolute top-6 left-6 bg-black/70 text-white text-xs px-4 py-2 rounded-2xl flex items-center">
+                                <i class="fa-brands fa-youtube mr-2 text-red-500"></i>
+                                MAIN MUSIC CHANNEL
+                            </div>
+                            <div class="absolute bottom-0 left-0 right-0 h-2/3 bg-gradient-to-t from-black to-transparent"></div>
+                            <div class="absolute bottom-8 left-8 right-8">
+                                <div class="text-3xl font-semibold heading-font">@dheerkumarsharma</div>
+                                <div class="text-emerald-400 text-sm mt-1">Kishore Kumar • Piano Covers • Spiritual Chants • Bollywood Classics</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Channel 2 -->
+                <div onclick="window.open('https://www.youtube.com/channel/UCAvGrHOB4Z7aBMtmoMFiaRA', '_blank')" 
+                     class="group cursor-pointer bg-zinc-950 border border-white/10 hover:border-amber-400 rounded-3xl p-2 transition-all">
+                    <div class="bg-black rounded-3xl overflow-hidden">
+                        <div class="h-80 relative flex items-center justify-center bg-gradient-to-br from-purple-950 to-zinc-900">
+                            <div class="text-center">
+                                <div class="text-6xl mb-6">🛠️</div>
+                                <div class="text-3xl heading-font tracking-tight">DKS Buildstech</div>
+                                <div class="text-zinc-400 mt-3">Coming Soon • DIY • Python Projects • Tech Experiments</div>
+                            </div>
+                            <div class="absolute top-6 left-6 bg-black/70 text-white text-xs px-4 py-2 rounded-2xl flex items-center">
+                                <i class="fa-brands fa-youtube mr-2 text-red-500"></i>
+                                TECH &amp; LEARNING
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LEARNING JOURNEY -->
+    <section id="journey" class="py-28 bg-zinc-950">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col lg:flex-row gap-20">
+                <div class="lg:w-5/12">
+                    <span class="font-mono text-xs tracking-widest border px-5 py-3 rounded-3xl border-violet-400 text-violet-300">CHAPTER 03 — GROWTH</span>
+                    <h2 class="heading-font text-6xl mt-8 leading-[1.05]">My Learning Odyssey</h2>
+                    <p class="mt-10 text-zinc-400">From self-taught piano to embracing the world of programming. Every day is a new line of code or a new chord.</p>
+                    
+                    <div class="mt-16 space-y-8">
+                        <div class="flex gap-6">
+                            <div class="font-mono text-right w-20 shrink-0">
+                                <div class="text-amber-400">2024</div>
+                                <div class="text-xs text-zinc-500">NOW</div>
+                            </div>
+                            <div class="flex-1 border-l border-amber-400/30 pl-8">
+                                <div class="font-semibold">Deep dive into Python, HTML, CSS, JavaScript</div>
+                                <div class="text-sm text-zinc-400 mt-2">Building this very portfolio with GSAP animations, Tailwind, and interactive elements as practice.</div>
+                            </div>
+                        </div>
+                        <div class="flex gap-6">
+                            <div class="font-mono text-right w-20 shrink-0">
+                                <div class="text-amber-400">2023</div>
+                            </div>
+                            <div class="flex-1 border-l border-amber-400/30 pl-8">
+                                <div class="font-semibold">YouTube Growth • Kishore Kumar Revival</div>
+                                <div class="text-sm text-zinc-400 mt-2">Created viral jukeboxes that reached millions. Piano became my primary medium of expression.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Skills -->
+                <div class="lg:w-7/12">
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="glass p-8 rounded-3xl">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <div class="text-5xl">🐍</div>
+                                    <div class="mt-8 text-2xl font-semibold">Python</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-emerald-400 text-sm font-medium">INTERMEDIATE</div>
+                                    <div class="h-2 w-24 bg-zinc-700 rounded mt-8">
+                                        <div class="h-2 w-3/4 bg-emerald-400 rounded"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-xs mt-10 text-zinc-400 leading-relaxed">
+                                Automation scripts, data analysis, building small CLI tools and exploring web scraping.
+                            </div>
+                        </div>
+                        
+                        <div class="glass p-8 rounded-3xl">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <div class="text-5xl">🌐</div>
+                                    <div class="mt-8 text-2xl font-semibold">Web Technologies</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sky-400 text-sm font-medium">BEGINNER+</div>
+                                    <div class="h-2 w-24 bg-zinc-700 rounded mt-8">
+                                        <div class="h-2 w-2/5 bg-sky-400 rounded"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-xs mt-10 text-zinc-400 leading-relaxed">
+                                HTML, CSS, JavaScript, Tailwind. This portfolio is my biggest project yet — full of parallax and GSAP.
+                            </div>
+                        </div>
+                        
+                        <div class="glass p-8 rounded-3xl col-span-2 md:col-span-1">
+                            <div class="text-5xl mb-8">🎹</div>
+                            <div class="text-2xl font-semibold">Music Production</div>
+                            <div class="mt-6 text-xs text-zinc-400">
+                                Piano performance, MIDI sequencing, SeeMusic app for rendering, video editing for lyrical videos.
+                            </div>
+                            <div class="mt-auto pt-12 text-[180px] leading-none font-black text-amber-400/10">88</div>
+                            <div class="text-xs -mt-8">KEYS ON A PIANO</div>
+                        </div>
+                        
+                        <div onclick="showRandomFact()" 
+                             class="glass p-8 rounded-3xl flex flex-col justify-between cursor-pointer hover:scale-[1.02] active:scale-95 transition-all border border-dashed border-amber-300/30 hover:border-amber-300">
+                            <div>
+                                <i class="fa-solid fa-lightbulb text-4xl text-amber-300"></i>
+                                <div class="text-2xl font-medium mt-6">Blissful Technical Fact</div>
+                            </div>
+                            <div id="fact-display" class="text-sm text-amber-100/90 italic">
+                                Click for a new delightful fact about music, code, or life.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INSIGHTS &amp; QUOTES -->
+    <section id="insights" class="py-28 bg-black relative">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="uppercase text-xs tracking-[2px] text-teal-400">CHAPTER 04 — WISDOM</span>
+                <h2 class="heading-font text-6xl mt-3">Blissful Insights &amp; Quotes</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Insight Card 1 -->
+                <div class="group bg-zinc-900 rounded-3xl p-8 hover:-translate-y-3 transition-all border border-transparent hover:border-teal-400/30">
+                    <div class="h-2 w-12 bg-teal-400 rounded mb-8 group-hover:w-20 transition-all"></div>
+                    <div class="text-2xl leading-tight">"Music is the universal language of mankind."</div>
+                    <div class="mt-auto pt-12 text-xs uppercase tracking-widest">— Henry Wadsworth Longfellow</div>
+                    <div class="mt-8 text-[10px] text-teal-400">CLASSICAL WISDOM • APPLIES PERFECTLY TO KISHORE'S LEGACY</div>
+                </div>
+                
+                <!-- Insight Card 2 -->
+                <div class="group bg-zinc-900 rounded-3xl p-8 hover:-translate-y-3 transition-all border border-transparent hover:border-amber-400/30">
+                    <div class="h-2 w-12 bg-amber-400 rounded mb-8 group-hover:w-20 transition-all"></div>
+                    <div class="text-2xl leading-tight">"Code is like humor. When you have to explain it, it’s bad."</div>
+                    <div class="mt-auto pt-12 text-xs uppercase tracking-widest">— Cory House</div>
+                    <div class="mt-8 text-[10px] text-amber-400">A DEVELOPER'S MANTRA • CLEAN CODE = BEAUTIFUL MUSIC</div>
+                </div>
+                
+                <!-- Insight Card 3 -->
+                <div class="group bg-zinc-900 rounded-3xl p-8 hover:-translate-y-3 transition-all border border-transparent hover:border-violet-400/30">
+                    <div class="h-2 w-12 bg-violet-400 rounded mb-8 group-hover:w-20 transition-all"></div>
+                    <div class="text-2xl leading-tight">"The only way to do great work is to love what you do."</div>
+                    <div class="mt-auto pt-12 text-xs uppercase tracking-widest">— Steve Jobs</div>
+                    <div class="mt-8 text-[10px] text-violet-400">MY NORTH STAR FOR BOTH MUSIC AND TECH</div>
+                </div>
+            </div>
+            
+            <div class="mt-20 text-center">
+                <button onclick="showRandomQuote()" 
+                        class="inline-flex items-center gap-x-4 group px-8 py-6 bg-white/5 hover:bg-white/10 border border-white/10 rounded-3xl transition-all">
+                    <span class="text-sm font-medium tracking-widest">ANOTHER BLISSFUL QUOTE</span>
+                    <span class="block w-8 h-px bg-white group-active:w-12 transition-all"></span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER / CONTACT -->
+    <footer class="bg-zinc-950 border-t border-white/10 py-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between gap-y-12">
+                <div>
+                    <div class="flex items-center gap-x-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-amber-300 to-yellow-600 rounded-2xl flex items-center justify-center text-zinc-950 text-2xl font-black">D</div>
+                        <span class="heading-font text-4xl">Dheer Kumar Sharma</span>
+                    </div>
+                    <p class="text-zinc-400 mt-6 max-w-xs">
+                        Creating harmony between technology and timeless art. 
+                        Thank you for visiting my digital home.
+                    </p>
+                    <div class="flex gap-x-6 mt-10 text-2xl">
+                        <a href="https://youtube.com/@dheerkumarsharma" target="_blank" class="hover:text-red-500 transition-colors"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="https://github.com/dksbuildstech" target="_blank" class="hover:text-white transition-colors"><i class="fa-brands fa-github"></i></a>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-x-16">
+                    <div>
+                        <div class="uppercase text-xs mb-6 text-zinc-500">Navigation</div>
+                        <div class="space-y-4 text-sm">
+                            <div onclick="smoothScrollTo('about')" class="cursor-pointer hover:text-amber-300">About Me</div>
+                            <div onclick="smoothScrollTo('music')" class="cursor-pointer hover:text-amber-300">My Music</div>
+                            <div onclick="smoothScrollTo('channels')" class="cursor-pointer hover:text-amber-300">YouTube</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="uppercase text-xs mb-6 text-zinc-500">Resources</div>
+                        <div class="space-y-4 text-sm">
+                            <a href="https://github.com/dksbuildstech/dks_buildstech" target="_blank" class="block hover:text-amber-300">GitHub Repo</a>
+                            <a href="#" class="block hover:text-amber-300">Piano MIDI Files (soon)</a>
+                            <a href="https://www.youtube.com/watch?v=vwipFU2IE5k" target="_blank" class="block hover:text-amber-300">Kishore Jukebox</a>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="uppercase text-xs mb-6 text-zinc-500">Connect</div>
+                        <div class="space-y-4 text-sm">
+                            <div class="cursor-pointer hover:text-amber-300"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="432b262f2f2c0327283021362a2f27303726202b6d202c2e">[email&#160;protected]</a></div>
+                            <div class="cursor-pointer hover:text-amber-300">Instagram (coming)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center text-xs text-zinc-500 mt-24">
+                Made with ❤️, GSAP, Tailwind &amp; lots of Kishore Kumar songs • © 2025 Dheer Kumar Sharma
+            </div>
+        </div>
+    </footer>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // Register GSAP plugins
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // Tailwind script run
+        function initializeTailwind() {
+            tailwind.config = {
+                content: [],
+                theme: {
+                    extend: {}
+                }
+            }
+        }
+        
+        // Create floating musical notes
+        function createFloatingNotes() {
+            const container = document.getElementById('notes-container');
+            const notes = ['♪', '♫', '♩', '♬', '𝄞'];
+            
+            for (let i = 0; i < 18; i++) {
+                const note = document.createElement('div');
+                note.className = 'musical-note';
+                note.textContent = notes[Math.floor(Math.random() * notes.length)];
+                note.style.left = Math.random() * 100 + 'vw';
+                note.style.animationDuration = (Math.random() * 35 + 25) + 's';
+                note.style.animationDelay = '-' + (Math.random() * 40) + 's';
+                note.style.fontSize = (Math.random() * 2.2 + 1.2) + 'rem';
+                note.style.opacity = Math.random() * 0.25 + 0.1;
+                container.appendChild(note);
+                
+                // Remove after animation ends and recreate for infinite feel
+                note.addEventListener('animationiteration', () => {
+                    note.style.left = Math.random() * 100 + 'vw';
+                });
+            }
+        }
+        
+        // Simple audio oscillator for piano
+        let audioContext;
+        
+        function initAudio() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            } catch(e) {
+                console.log("Web Audio API not supported");
+            }
+        }
+        
+        function playNote(freq) {
+            if (!audioContext) initAudio();
+            if (!audioContext) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = freq;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.6, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 1.2);
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 1.5);
+            
+            // Visual feedback already handled by CSS active state
+        }
+        
+        // Progress bar
+        function setupProgressBar() {
+            const progressBar = document.getElementById('progress-bar');
+            
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.scrollY;
+                const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrollPercent = scrollTop / docHeight * 100;
+                progressBar.style.width = `${scrollPercent}%`;
+            });
+        }
+        
+        // Parallax effect on portrait
+        function setupParallax() {
+            const portraitFrame = document.getElementById('portrait-frame');
+            
+            window.addEventListener('mousemove', (e) => {
+                const x = (window.innerWidth / 2 - e.clientX) / 25;
+                const y = (window.innerHeight / 2 - e.clientY) / 25;
+                portraitFrame.style.transform = `perspective(1000px) rotateX(${y}deg) rotateY(${-x}deg)`;
+            });
+            
+            // Reset on leave
+            window.addEventListener('mouseleave', () => {
+                portraitFrame.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+            });
+        }
+        
+        // GSAP Animations
+        function initAnimations() {
+            // Hero text animation
+            gsap.from(".hero-bg h1", {
+                y: 120,
+                opacity: 0,
+                duration: 1.6,
+                ease: "power4.out"
+            });
+            
+            // Section reveals
+            gsap.utils.toArray("section").forEach((section, index) => {
+                gsap.from(section.children, {
+                    scrollTrigger: {
+                        trigger: section,
+                        start: "top 70%",
+                    },
+                    y: 80,
+                    opacity: 0,
+                    duration: 1,
+                    stagger: 0.15,
+                    ease: "power3.out"
+                });
+            });
+            
+            // Piano keys pop in
+            gsap.from(".piano-key", {
+                scrollTrigger: "#music",
+                scaleY: 0.2,
+                stagger: 0.07,
+                duration: 0.8,
+                ease: "back.out(1.4)"
+            });
+        }
+        
+        // Array of technical / blissful facts
+        const facts = [
+            "Kishore Kumar could flawlessly sing in more than 10 languages without any formal training — much like how Python lets you do powerful things with minimal boilerplate.",
+            "The piano has 88 keys. The standard ASCII has 128 characters. Both are instruments for creative expression.",
+            "Python's creator Guido van Rossum named it after the comedy series 'Monty Python' — humor and code have always been intertwined.",
+            "A single piano can produce over 10 million unique combinations of notes. The same combinatorial explosion exists in programming logic.",
+            "The human ear can distinguish about 1,400 different pitches. Our brains turn those into emotion — the ultimate API between sound and soul.",
+            "Every time you press a piano key, over 100 moving parts inside the instrument spring into action. Similar complexity lives inside every line of clean Python code.",
+            "Kishore Kumar's voice had a natural vibrato that moved millions. Good code has its own rhythm — consistent, predictable, and emotionally satisfying.",
+            "The first computer bug was an actual moth. Music has always helped debug the human spirit."
+        ];
+        
+        let currentFactIndex = 0;
+        
+        function showRandomFact() {
+            const display = document.getElementById('fact-display');
+            currentFactIndex = (currentFactIndex + 1) % facts.length;
+            display.style.opacity = 0;
+            
+            setTimeout(() => {
+                display.textContent = facts[currentFactIndex];
+                display.style.opacity = 1;
+            }, 300);
+        }
+        
+        const quotes = [
+            {
+                text: "Without music, life would be a mistake.",
+                author: "Friedrich Nietzsche"
+            },
+            {
+                text: "Programming is the closest thing we have to magic.",
+                author: "Anonymous Developer"
+            },
+            {
+                text: "The best way to predict the future is to create it.",
+                author: "Peter Drucker"
+            },
+            {
+                text: "Melody is the essence of music.",
+                author: "Wolfgang Amadeus Mozart"
+            }
+        ];
+        
+        function showRandomQuote() {
+            const random = quotes[Math.floor(Math.random() * quotes.length)];
+            const message = `"${random.text}" — ${random.author}`;
+            alert(message + "\n\n(Imagine this quote gracefully fading in with GSAP in a real enhanced version!)");
+        }
+        
+        function smoothScrollTo(section) {
+            let id = '';
+            switch(section) {
+                case 'about': id = 'about'; break;
+                case 'music': id = 'music'; break;
+                case 'channels': id = 'channels'; break;
+                case 'journey': id = 'journey'; break;
+                case 'insights': id = 'insights'; break;
+            }
+            if (id) {
+                document.getElementById(id).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        }
+        
+        // Main initialization
+        function initialize() {
+            initializeTailwind();
+            createFloatingNotes();
+            initAudio();
+            setupProgressBar();
+            setupParallax();
+            initAnimations();
+            
+            // Keyboard support for piano (demo)
+            document.addEventListener('keydown', function(e) {
+                const keyMap = {
+                    'a': 261.63, // C
+                    's': 293.66, // D
+                    'd': 329.63, // E
+                    'f': 349.23, // F
+                    'g': 392,    // G
+                    'h': 440,    // A
+                    'j': 493.88  // B
+                };
+                
+                if (keyMap[e.key.toLowerCase()]) {
+                    playNote(keyMap[e.key.toLowerCase()]);
+                    
+                    // Find corresponding piano key and flash it
+                    const keys = document.querySelectorAll('.piano-key');
+                    const index = Object.keys(keyMap).indexOf(e.key.toLowerCase());
+                    if (keys[index]) {
+                        keys[index].classList.add('!bg-amber-300', '!text-black');
+                        setTimeout(() => {
+                            keys[index].classList.remove('!bg-amber-300', '!text-black');
+                        }, 180);
+                    }
+                }
+            });
+            
+            // Make portrait image load with fallback
+            const portraitImg = document.getElementById('portrait');
+            portraitImg.onerror = function() {
+                this.src = 'https://picsum.photos/id/64/600/800';
+            };
+            
+            console.log('%c🎹 Welcome to Dheer Kumar Sharma\'s Parallax Portfolio! 🎹\nBuilt as an interactive learning project with love for music and code.', 'color:#d4af37; font-family:monospace');
+        }
+        
+        // Boot the experience
+        window.onload = initialize;
+    </script>
+</body>
+</html>
